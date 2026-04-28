@@ -8,6 +8,10 @@ class Delivery {
   final String productTypeName;
   final String? address;
   final String? reason;
+  final String? employerId;
+  final String? assignedDriverId;
+  final String? cityId;
+  final String? productTypeId;
 
   Delivery({
     required this.id,
@@ -19,6 +23,10 @@ class Delivery {
     required this.productTypeName,
     this.address,
     this.reason,
+    this.employerId,
+    this.assignedDriverId,
+    this.cityId,
+    this.productTypeId,
   });
 
   factory Delivery.fromJson(Map<String, dynamic> json) {
@@ -32,6 +40,10 @@ class Delivery {
       productTypeName: json['product_types'] != null ? json['product_types']['name'] : 'Unknown Product',
       address: json['address'],
       reason: json['reason'],
+      employerId: json['employer_id'],
+      assignedDriverId: json['assigned_driver_id'],
+      cityId: json['city_id'],
+      productTypeId: json['product_type_id'],
     );
   }
 }

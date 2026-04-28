@@ -21,20 +21,99 @@ class HomeDrawer extends StatefulWidget {
 
 class _HomeDrawerState extends State<HomeDrawer> {
   List<DrawerList>? drawerList;
+  String _userName = 'User';
+  String _userRole = 'driver';
+
   @override
   void initState() {
     setDrawerListArray();
+    _loadUserInfo();
     super.initState();
   }
 
+  void _loadUserInfo() async {
+    final name = await apiService.getUserName();
+    final role = await apiService.getUserRole();
+    if (mounted) {
+      setState(() {
+        _userName = name ?? 'User';
+        _userRole = role ?? 'driver';
+        setDrawerListArray(); // Refresh drawer list based on role
+      });
+    }
+  }
+
   void setDrawerListArray() {
-    drawerList = <DrawerList>[
-      DrawerList(
-        index: DrawerIndex.HOME,
-        labelName: 'Home',
-        icon: const Icon(Icons.home),
-      ),
-    ];
+    if (_userRole == 'owner') {
+      drawerList = <DrawerList>[
+        DrawerList(
+          index: DrawerIndex.HOME,
+          labelName: 'Dashboard',
+          icon: const Icon(Icons.dashboard),
+        ),
+        DrawerList(
+          index: DrawerIndex.Employers,
+          labelName: 'Employers',
+          icon: const Icon(Icons.people),
+        ),
+        DrawerList(
+          index: DrawerIndex.Drivers,
+          labelName: 'Drivers',
+          icon: const Icon(Icons.delivery_dining),
+        ),
+        DrawerList(
+          index: DrawerIndex.Cities,
+          labelName: 'Cities',
+          icon: const Icon(Icons.location_city),
+        ),
+        DrawerList(
+          index: DrawerIndex.ProductTypes,
+          labelName: 'Product Types',
+          icon: const Icon(Icons.category),
+        ),
+        DrawerList(
+          index: DrawerIndex.Deliveries,
+          labelName: 'Deliveries',
+          icon: const Icon(Icons.local_shipping),
+        ),
+        DrawerList(
+          index: DrawerIndex.Logs,
+          labelName: 'Logs',
+          icon: const Icon(Icons.history),
+        ),
+      ];
+    } else if (_userRole == 'employer') {
+      drawerList = <DrawerList>[
+        DrawerList(
+          index: DrawerIndex.HOME,
+          labelName: 'Dashboard',
+          icon: const Icon(Icons.dashboard),
+        ),
+        DrawerList(
+          index: DrawerIndex.Deliveries,
+          labelName: 'Deliveries',
+          icon: const Icon(Icons.local_shipping),
+        ),
+        DrawerList(
+          index: DrawerIndex.AssignCity,
+          labelName: 'Assign City',
+          icon: const Icon(Icons.location_city),
+        ),
+      ];
+    } else {
+      drawerList = <DrawerList>[
+        DrawerList(
+          index: DrawerIndex.HOME,
+          labelName: 'Dashboard',
+          icon: const Icon(Icons.dashboard),
+        ),
+        DrawerList(
+          index: DrawerIndex.Deliveries,
+          labelName: 'My Deliveries',
+          icon: const Icon(Icons.local_shipping),
+        ),
+      ];
+    }
   }
 
   @override
@@ -95,11 +174,26 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8, left: 4),
                     child: Text(
-                      'Driver Account',
+                      _userName,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isLightMode ? AppTheme.grey : AppTheme.white,
                         fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 4),
+                    child: Text(
+                      _userRole == 'owner' 
+                          ? 'Owner Account' 
+                          : _userRole == 'employer' 
+                              ? 'Employer Account' 
+                              : 'Driver Account',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        color: isLightMode ? AppTheme.grey.withOpacity(0.7) : AppTheme.white.withOpacity(0.7),
+                        fontSize: 14,
                       ),
                     ),
                   ),
@@ -160,13 +254,35 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void onTapped() async {
-    await apiService.logout();
-    if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-      (Route<dynamic> route) => false,
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.grey)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Sign Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
+
+    if (confirm == true) {
+      await apiService.logout();
+      if (!mounted) return;
+      
+      // Use Navigator.of(context, rootNavigator: true) to ensure we clear the entire app stack
+      Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   Widget inkwell(DrawerList listData) {
@@ -278,6 +394,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
 enum DrawerIndex {
   HOME,
+  Employers,
+  Drivers,
+  Cities,
+  ProductTypes,
+  Deliveries,
+  Logs,
+  AssignCity,
   FeedBack,
   Help,
   Share,

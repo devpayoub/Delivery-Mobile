@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Sign in to your driver portal.",
+                          "Sign in to your portal.",
                           style: AppTheme.subtitle.copyWith(
                             color: AppTheme.lightText,
                           ),
@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           ),
         ],
         gradient: const LinearGradient(
-          colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)], // Premium purple gradient
+          colors: [AppTheme.primary, AppTheme.secondary], // Premium purple gradient
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),

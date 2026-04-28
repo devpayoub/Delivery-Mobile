@@ -7,6 +7,15 @@ class AppTheme {
   static const Color nearlyWhite = Color(0xFFFEFEFE);
   static const Color white = Color(0xFFFFFFFF);
   static const Color nearlyBlack = Color(0xFF213333);
+  static const Color primary = Color(0xFF4A00E0);
+  static const Color secondary = Color(0xFF8E2DE2);
+  static const Color accent = Color(0xFF5B86E5);
+
+  static const Color statusPending = Color(0xFFFF9966);
+  static const Color statusTransit = Color(0xFF5B86E5);
+  static const Color statusDelivered = Color(0xFF00B09B);
+  static const Color statusCancelled = Color(0xFFFF5E62);
+
   static const Color grey = Color(0xFF3A5160);
   static const Color darkGrey = Color(0xFF313A44);
 
